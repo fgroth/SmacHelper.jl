@@ -10,14 +10,12 @@ using LinearAlgebra
                          image_size_kpc::Real=-1, rvir_to_plot::Number=3,
                          image_depth_kpc::Real=-1, thin::Number=1,
                          distr_scheme::String="SPH",
-                         snapnum::Int64=0,
                          fits_dir::String="fits",
                          fits_suffix::String="",
                          lightcone_center::Union{Vector,Nothing}=nothing,
                          opening_angle::Union{Nothing,Number}=nothing,
                          min_dist::Number=-1, max_dist::Number=-1,
-                         template_paramfile::String="smac.inp",
-                         simulation_dir::String
+                         template_paramfile::String="smac.inp"
                          )
 
 Write a parameter file for Smac.
@@ -30,14 +28,12 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                               image_size_kpc::Real=-1, rvir_to_plot::Number=3,
                               image_depth_kpc::Real=-1, thin::Number=1,
                               distr_scheme::String="SPH",
-                              snapnum::Int64=0,
                               fits_dir::String="fits",
                               fits_suffix::String="",
                               lightcone_center::Union{Vector,Nothing}=nothing,
                               opening_angle::Union{Nothing,Number}=nothing,
                               min_dist::Number=-1, max_dist::Number=-1,
-                              template_paramfile::String="smac.inp",
-                              simulation_dir::String
+                              template_paramfile::String="smac.inp"
                               )
 
     head = get_snap_header(gadget_data)
@@ -188,14 +184,14 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 use_keys = has_key_files(gadget_data)
                 write(this_par, "USE_KEYS = "*sprintf1("%d",use_keys)*"\n")
             elseif startswith(line, "OUTPUT_DIR")
-                write(this_par, "OUTPUT_DIR = "*simulation_dir*"/\n")
+                write(this_par, "OUTPUT_DIR = "*get_simulation_path(data.snap)*"/\n")
             elseif startswith(line, "SNAP_FILE")
                 if parallel_version
-                    write(this_par, "SNAP_FILE = "*simulation_dir,"/snapdir_"*sprintf1("%03d", snapnum)*"/snap_"*sprintf1("%03d", snapnum)*"\n")
+                    write(this_par, "SNAP_FILE = "*gadget_data.snap*"\n")
                 end
             elseif startswith(line, "SNAP_START")
                 if !parallel_version
-                    write(this_par, "SNAP_START = "*sprintf1("%d",snapnum)*"\n")
+                    write(this_par, "SNAP_START = "*sprintf1("%d",get_snapshot_number_from_name(data.snap))*"\n")
                 end
             elseif startswith(line, "R_VIR")
                 write(this_par, "R_VIR = "*sprintf1("%f",halo_radius)*"\n")
