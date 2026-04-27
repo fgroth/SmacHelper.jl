@@ -11,4 +11,7 @@ export find_maps_index, read_maps_data,
     get_image_size, get_image_pixel_size,
     get_pixel_scale
 
+include(joinpath("manipulate_fits_data.jl"))
+export add_keyword_to_fits_header
+
 end # module SmacHelper
