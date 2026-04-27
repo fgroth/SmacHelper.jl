@@ -86,91 +86,9 @@ function write_smac_paramfile(; gadget_data::GadgetData,
         end
     end
 
-    # choose the output map type.
-    i_output_sub = -1
-    if property == "TEMP"
-        i_output_map = 2
-    elseif property == "RHO"
-        i_output_map = 1
-    elseif contains(property,"tSZ")
-        i_output_map = 7
-        i_output_sub = 1 # to check
-    elseif contains(property,"kSZ")
-        i_output_map = 8
-        i_output_sub = 1 # to check        
-    elseif contains(property,"VEL2")
-        # this case has to be before VEL, as it is more specific
-        i_output_map = 11
-    elseif contains(property,"VEL")
-        i_output_map = 10
-    elseif contains(property,"X-RAY")
-        i_output_map = 6
-        if contains(property,"simple")
-            i_output_sub = 0
-        elseif contains(property,"bolometric")
-            i_output_sub = 1
-        else
-            i_output_sub = 4
-        end
-    elseif property == "stars"
-        i_output_map = 201
-    end
+    i_output_map, i_output_sub = choose_output_map(property)
 
-    # choose the energy band and output subtype.
-    e0 = 0.5
-    e1 = 2.0
-    if contains(property,"bolometric")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 1
-        end
-        e0 = 0.1
-        e1 = 10
-    elseif contains(property,"Chandra")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 2
-        end
-        # todo: check these energy bands where they were coming from
-        e0 = 0.5
-        e1 = 7
-    elseif contains(property,"XMM")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 2
-        end
-        # Energy bands corresponding to velocity analysis performed by Gattuz+2024
-        e0 = 4
-        e1 = 9.25
-    elseif contains(property,"tabulated")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 2
-        end
-    elseif contains(property,"XRISM")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 2
-        end
-        # energy band focusing on the iron lines
-        # compare also Vazza&Brunetti2025
-        e0 = 5
-        e1 = 7
-    elseif contains(property,"eROSITA")
-        if i_output_sub == -1
-            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
-            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
-            i_output_sub = 2
-        end
-        # Energy bands corresponding to the eROSITA Coma study by Churazov+2021
-        e0 = 0.4
-        e1 = 2.0
-    end
+    i_output_sub, e0, e1 = choose_energy_bands_instrument(property)
 
     # now we are ready to write the new parameter file.
     this_par = open(par_name,"w")
@@ -279,4 +197,108 @@ function write_smac_paramfile(; gadget_data::GadgetData,
         end
     end
     close(this_par)
+end
+
+"""
+    choose_output_map(property::String)
+
+Return OUTPUT_MAP and OUTPUT_SUB (integers).
+"""
+function choose_output_map(property::String)
+    # choose the output map type.
+    i_output_sub = -1
+    if property == "TEMP"
+        i_output_map = 2
+    elseif property == "RHO"
+        i_output_map = 1
+    elseif contains(property,"tSZ")
+        i_output_map = 7
+        i_output_sub = 1 # to check
+    elseif contains(property,"kSZ")
+        i_output_map = 8
+        i_output_sub = 1 # to check
+    elseif contains(property,"VEL2")
+        # this case has to be before VEL, as it is more specific
+        i_output_map = 11
+    elseif contains(property,"VEL")
+        i_output_map = 10
+    elseif contains(property,"X-RAY")
+        i_output_map = 6
+        if contains(property,"simple")
+            i_output_sub = 0
+        elseif contains(property,"bolometric")
+            i_output_sub = 1
+        else
+            i_output_sub = 4
+        end
+    elseif property == "stars"
+        i_output_map = 201
+    end
+
+    return i_output_map, i_output_sub
+end
+
+"""
+    choose_energy_bands_instrument(property::String)
+
+Return OUTPUT_SUB, XRAY_E0, and XRAY_E1 for given property, if it contains the instrument in the name.
+"""
+function choose_energy_bands_instrument(property::String)
+    # choose the energy band and output subtype.
+    e0 = 0.5
+    e1 = 2.0
+    if contains(property,"bolometric")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 1 (tabulated cooling function, bolometric limits, so we have proper emission)
+            i_output_sub = 1
+        end
+        e0 = 0.1
+        e1 = 10
+    elseif contains(property,"Chandra")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
+            i_output_sub = 2
+        end
+        # todo: check these energy bands where they were coming from
+        e0 = 0.5
+        e1 = 7
+    elseif contains(property,"XMM")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
+            i_output_sub = 2
+        end
+        # Energy bands corresponding to velocity analysis performed by Gattuz+2024
+        e0 = 4
+        e1 = 9.25
+    elseif contains(property,"tabulated")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
+            i_output_sub = 2
+        end
+    elseif contains(property,"XRISM")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
+            i_output_sub = 2
+        end
+        # energy band focusing on the iron lines
+        # compare also Vazza&Brunetti2025
+        e0 = 5
+        e1 = 7
+    elseif contains(property,"eROSITA")
+        if i_output_sub == -1
+            # not defined before means that not the X-ray map is to be calculated, but it is used only for weighting.
+            # in this case, we need type 2 (tabulated cooling function, so we have proper emission)
+            i_output_sub = 2
+        end
+        # Energy bands corresponding to the eROSITA Coma study by Churazov+2021
+        e0 = 0.4
+        e1 = 2.0
+    end
+
+    return i_output_sub, e0, e1
 end
