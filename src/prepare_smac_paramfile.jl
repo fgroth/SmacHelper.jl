@@ -1,4 +1,5 @@
 using GadgetDataHandle
+using LinearAlgebra
 
 """
     write_smac_paramfile(; gadget_data::GadgetData,
@@ -6,7 +7,8 @@ using GadgetDataHandle
                          property::String="RHO", projection::String="yz",
                          resolution::Int64=1024,
                          parallel_version::Bool=false,
-                         rvir_to_plot::Number=3, thin::Number=1,
+                         image_size_kpc::Real=-1, rvir_to_plot::Number=3,
+                         image_depth_kpc::Real=-1, thin::Number=1,
                          distr_scheme::String="SPH",
                          snapnum::Int64=0,
                          fits_dir::String="fits",
@@ -25,7 +27,8 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                               property::String="RHO", projection::String="yz",
                               resolution::Int64=1024,
                               parallel_version::Bool=false,
-                              rvir_to_plot::Number=3, thin::Number=1,
+                              image_size_kpc::Real=-1, rvir_to_plot::Number=3,
+                              image_depth_kpc::Real=-1, thin::Number=1,
                               distr_scheme::String="SPH",
                               snapnum::Int64=0,
                               fits_dir::String="fits",
@@ -61,7 +64,33 @@ function write_smac_paramfile(; gadget_data::GadgetData,
         opening_angle = 1.0
     end
 
-    # choose the output mao type.
+    # choose the image size
+    if image_size_kpc < 0
+        image_size_xy = halo_radius *scale_factor*2*rvir_to_plot/h0
+    else
+	image_size_xy = image_size_kpc
+    end
+    if image_depth_kpc < 0
+        image_size_z = thin*image_size_xy
+    else
+	image_size_z = image_depth_kpc
+    end
+    if min_dist < 0
+        if lightcone_center != nothing
+            min_dist = maximum(norm(halo_position-lightcone_center)/h0*scale_factor - 0.5*image_size_z, 0)
+        else
+            min_dist = 0
+        end
+    end
+    if max_dist < 0
+        if lightcone_center != nothing
+            max_dist = norm(halo_position-lightcone_center)/h0*scale_factor + 0.5*image_size_z
+        else
+            max_dist = 1e99
+        end
+    end
+
+    # choose the output map type.
     i_output_sub = -1
     if property == "TEMP"
         i_output_map = 2
@@ -194,28 +223,14 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 end
                 write(this_par, "PART_DISTR = "*sprintf1("%d", part_distr))
             elseif startswith(line, "IMG_XY_SIZE")
-                write(this_par, "IMG_XY_SIZE = "*sprintf1("%f",halo_radius *scale_factor*2*rvir_to_plot/h0)*"\n")
+                write(this_par, "IMG_XY_SIZE = "*sprintf1("%f",image_size_xy)*"\n")
             elseif startswith(line, "IMG_Z_SIZE")
-                write(this_par, "IMG_Z_SIZE = "*sprintf1("%f",thin*halo_radius *scale_factor*2*rvir_to_plot/h0)*"\n")
+                write(this_par, "IMG_Z_SIZE = "*sprintf1("%f",image_size_z)*"\n")
             elseif startswith(line, "MIN_DIST")
-                if min_dist == -1
-                    if lightcone_center != nothing
-                        min_dist = (radius(lightcone_center, halo_position)[1] - thin*halo_radius*rvir_to_plot)/h0*scale_factor
-                    else
-                        min_dist = 0
-                    end
-                end
                 write(this_par, "MIN_DIST = "*sprintf1("%f",min_dist)*"\n")
             elseif startswith(line, "IMG_SIZE")
                 write(this_par, "IMG_SIZE = "*sprintf1("%d",resolution)*"\n")
             elseif startswith(line, "MAX_DIST")
-                if max_dist == -1
-                    if lightcone_center != nothing
-                        max_dist = (radius(lightcone_center, halo_position)[1] + thin*halo_radius*rvir_to_plot)/h0*scale_factor
-                    else
-                        max_dist = 1e99
-                    end
-                end
                 write(this_par, "MAX_DIST = "*sprintf1("%f",max_dist)*"\n")
             elseif startswith(line, "OUTPUT_MAP")
                 write(this_par, "OUTPUT_MAP = "*sprintf1("%d",i_output_map)*"\n")
