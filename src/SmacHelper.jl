@@ -16,6 +16,9 @@ include(joinpath("read_fits_header.jl"))
 export read_rotation_matrix_from_fitsfile,
     get_image_size, get_image_pixel_size,
     get_pixel_scale
+
+include(joinpath("read_smac_paramfile.jl"))
+
 include(joinpath("determine_orientation.jl"))
 export rotated_direction, rotated_direction_angle,
     default_north_angle
