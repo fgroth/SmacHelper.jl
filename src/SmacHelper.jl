@@ -26,6 +26,9 @@ export rotated_direction, rotated_direction_angle,
 include(joinpath("check_orientation.jl"))
 export check_rotated_north_east_righthanded
 
+include(joinpath("fix_orientation.jl"))
+export permute_image_righthanded
+
 include(joinpath("manipulate_fits_data.jl"))
 export add_keyword_to_fits_header
 
