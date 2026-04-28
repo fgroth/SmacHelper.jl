@@ -43,5 +43,7 @@ export imshow_julia_array
 
 include(joinpath("plot_smac", "plot_scale.jl"))
 export plot_scale
+include(joinpath("plot_smac", "plot_rvir.jl"))
+export plot_rvir_circle
 
 end # module SmacHelper
