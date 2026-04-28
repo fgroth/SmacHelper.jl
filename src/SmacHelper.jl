@@ -45,5 +45,7 @@ include(joinpath("plot_smac", "plot_scale.jl"))
 export plot_scale
 include(joinpath("plot_smac", "plot_rvir.jl"))
 export plot_rvir_circle
+include(joinpath("plot_smac", "plot_north.jl"))
+export overplot_north
 
 end # module SmacHelper

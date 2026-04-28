@@ -49,4 +49,4 @@ If post-processing is applied to a fits file, a keyword can be added to the head
 
 A wrapper function to [PyPlot](https://github.com/JuliaPy/PyPlot.jl) that automatically takes care of different axis conventions is `imshow_julia_array`.
 
-The physical scale of the image can be shown using `plot_scale`, and the virial radius using `plot_rvir_circle`.
+The physical scale of the image can be shown using `plot_scale`, the virial radius using `plot_rvir_circle`, and the north direction with `overplot_north`.
