@@ -50,7 +50,7 @@ function determine_best_image_orientation(fitsfile::String; los::Vector{Float64}
     # values are in the range [-pi, pi].
     
     #check which axis is closest to north:
-    north_axis = check_closest_aixs(north_angle)
+    north_axis = check_closest_axis(north_angle)
     # we should just check the general rotation between north and east. There could be rare edge-cases where east and north are just below pi/2 apart due to numerical rounding and they perfectly align with the limits between axis, which could lead to north and east being assigned to the same axis.
     right_handed = check_north_east_angle_righthanded(north_angle=north_angle, east_angle_east_angle)
     if right_handed
@@ -63,11 +63,11 @@ function determine_best_image_orientation(fitsfile::String; los::Vector{Float64}
 end
 
 """
-    check_closest_aixs(angle::Float64)
+    check_closest_axis(angle::Float64)
 
 Check which axis is closest to given rotation.
 """
-function check_closest_aixs(angle::Float64)
+function check_closest_axis(angle::Float64)
     if angle < -pi || angle > pi
         error("angle has to be in the range [-pi,pi]")
     end
