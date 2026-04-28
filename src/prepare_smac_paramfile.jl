@@ -145,7 +145,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
             elseif startswith(line, "IMG_SIZE")
                 write(this_par, "IMG_SIZE = "*sprintf1("%d",resolution)*"\n")
             elseif startswith(line, "MAX_DIST")
-                write(this_par, "MAX_DIST = "*sprintf1("%f",max_dist)*"\n")
+                write(this_par, "MAX_DIST = "*sprintf1("%g",max_dist)*"\n")
             elseif startswith(line, "OUTPUT_MAP")
                 write(this_par, "OUTPUT_MAP = "*sprintf1("%d",i_output_map)*"\n")
             elseif startswith(line, "OUTPUT_SUB")
