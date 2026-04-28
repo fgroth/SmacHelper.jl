@@ -23,4 +23,8 @@ export rotated_direction, rotated_direction_angle,
 include(joinpath("manipulate_fits_data.jl"))
 export add_keyword_to_fits_header
 
+
+include(joinpath("plot_smac.jl"))
+export imshow_julia_array
+
 end # module SmacHelper
