@@ -23,6 +23,9 @@ include(joinpath("determine_orientation.jl"))
 export rotated_direction, rotated_direction_angle,
     default_north_angle, default_east_angle
 
+include(joinpath("check_orientation.jl"))
+export check_rotated_north_east_righthanded
+
 include(joinpath("manipulate_fits_data.jl"))
 export add_keyword_to_fits_header
 
