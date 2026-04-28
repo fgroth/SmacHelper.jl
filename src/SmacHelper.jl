@@ -19,6 +19,9 @@ export read_rotation_matrix_from_fitsfile,
 
 include(joinpath("read_smac_paramfile.jl"))
 
+include(joinpath("manipulate_fits_data.jl"))
+export add_keyword_to_fits_header
+
 include(joinpath("determine_orientation.jl"))
 export rotated_direction, rotated_direction_angle,
     default_north_angle, default_east_angle
@@ -29,9 +32,6 @@ export check_rotated_north_east_righthanded,
 
 include(joinpath("fix_orientation.jl"))
 export permute_image_righthanded
-
-include(joinpath("manipulate_fits_data.jl"))
-export add_keyword_to_fits_header
 
 
 include(joinpath("plot_smac.jl"))
