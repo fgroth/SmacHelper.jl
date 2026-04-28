@@ -5,7 +5,9 @@ version = "0.1.0"
 
 [deps]
 FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
+Formatting = "59287772-0a20-5a39-b81b-1366585eb4c0"
 GadgetDataHandle = "0669c0a9-e839-4752-9cc8-3f8df3b08347"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"

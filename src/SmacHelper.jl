@@ -27,4 +27,7 @@ export add_keyword_to_fits_header
 include(joinpath("plot_smac.jl"))
 export imshow_julia_array
 
+include(joinpath("plot_scale.jl"))
+export plot_scale
+
 end # module SmacHelper
