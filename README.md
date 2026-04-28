@@ -39,5 +39,14 @@ To interpret the image, it might be useful to rotate / mirror the image, such th
 This can be done by first checking the north and east angles with `default_north_angle`/`default_east_angle`. The line-of-sight has to be specified, it is not contained in the smac output.
 Based on the angles, the closest axis have to be identified using `determine_best_axis_match`. Finally, the image (and angles) can be adjusted using `permute_image_righthanded`.
 
+
+## Manipulating the fits file
+
+If post-processing is applied to a fits file, a keyword can be added to the header via `add_keyword_to_fits_header`.
+
+
 ## Plotting the smac data
 
+A wrapper function to [PyPlot](https://github.com/JuliaPy/PyPlot.jl) that automatically takes care of different axis conventions is `imshow_julia_array`.
+
+The physical scale of the image can be shown using `plot_scale`.
