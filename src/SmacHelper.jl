@@ -21,7 +21,7 @@ include(joinpath("read_smac_paramfile.jl"))
 
 include(joinpath("determine_orientation.jl"))
 export rotated_direction, rotated_direction_angle,
-    default_north_angle
+    default_north_angle, default_east_angle
 
 include(joinpath("manipulate_fits_data.jl"))
 export add_keyword_to_fits_header

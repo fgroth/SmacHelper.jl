@@ -1,3 +1,4 @@
+using LinearAlgebra
 
 """
     rotated_direction(fitsfile::String; direction::Vector{Float64}=[0,0,1.0])
@@ -13,7 +14,7 @@ end
 """
     rotated_direction_angle(fitsfile::String; direction::Vector{Float64}=[0,0,1.0])
 
-Return the angle of the rotated direction vector in the x-y plane due to the image rotation done by smac/phox.
+Return the angle relative to the x-axis of the rotated direction vector in the x-y plane due to the image rotation done by smac/phox.
 """
 function rotated_direction_angle(fitsfile::String; direction::Vector{Float64}=[0,0,1.0])
     new_direction = rotated_direction(fitsfile, direction=direction)
@@ -31,4 +32,23 @@ Return the north angle due to the image rotation done by smac/phox.
 """
 function default_north_angle(fitsfile::String; default_north::Vector{Float64}=[0,0,1.0])
     return rotated_direction_angle(fitsfile, direction=default_north)
+end
+
+"""
+    default_east_direction(; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+
+Return the default east direction based on the line-of-sight vector (pointing from the observer to the cluster), and the north direction.
+"""
+function default_east_direction(; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+    return cross(normalize(los), default_north)
+end
+
+"""
+    default_east_angle(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+
+Return the east angle due to the image rotation done by smac/phox.
+"""
+function default_east_angle(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+    default_east = default_east_direction(los=los, default_north=default_north)
+    return rotated_direction_angle(fitsfile, direction=default_east)
 end
