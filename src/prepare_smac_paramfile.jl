@@ -82,7 +82,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
         if lightcone_center != nothing
             max_dist = norm(halo_position-lightcone_center)/h0*scale_factor + 0.5*image_size_z
         else
-            max_dist = 1e99
+            max_dist = 1e38
         end
     end
 
