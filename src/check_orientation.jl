@@ -40,11 +40,11 @@ function check_rotated_north_east_righthanded(fitsfile::String; los::Vector{Floa
 end
 
 """
-    determine_best_image_orientation(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+    determine_best_axis_match(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
 
 Return the north and east axis (x is 1, y is 2) closest to the north/east angles after the rotation done by smac/phox.
 """
-function determine_best_image_orientation(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
+function determine_best_axis_match(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
     east_angle = default_east_angle(fitsfile, los=los, default_north=default_north)
     north_angle = default_north_angle(fitsfile, default_north=default_north)
     # values are in the range [-pi, pi].

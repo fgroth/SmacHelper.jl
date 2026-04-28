@@ -24,7 +24,8 @@ export rotated_direction, rotated_direction_angle,
     default_north_angle, default_east_angle
 
 include(joinpath("check_orientation.jl"))
-export check_rotated_north_east_righthanded
+export check_rotated_north_east_righthanded,
+    determine_best_axis_match
 
 include(joinpath("fix_orientation.jl"))
 export permute_image_righthanded
