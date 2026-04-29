@@ -73,7 +73,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
     end
     if min_dist < 0
         if lightcone_center != nothing
-            min_dist = maximum(norm(halo_position-lightcone_center)/h0*scale_factor - 0.5*image_size_z, 0)
+            min_dist = max(norm(halo_position-lightcone_center)/h0*scale_factor - 0.5*image_size_z, 0)
         else
             min_dist = 0
         end
@@ -88,7 +88,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
 
     i_output_map, i_output_sub = choose_output_map(property)
 
-    i_output_sub, e0, e1 = choose_energy_bands_instrument(property)
+    i_output_sub, e0, e1 = choose_energy_bands_instrument(property, i_output_sub=i_output_sub)
 
     # now we are ready to write the new parameter file.
     this_par = open(par_name,"w")
@@ -102,14 +102,14 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 use_keys = has_key_files(gadget_data)
                 write(this_par, "USE_KEYS = "*sprintf1("%d",use_keys)*"\n")
             elseif startswith(line, "OUTPUT_DIR")
-                write(this_par, "OUTPUT_DIR = "*get_simulation_path(data.snap)*"/\n")
+                write(this_par, "OUTPUT_DIR = "*get_simulation_path(gadget_data.snap)*"/\n")
             elseif startswith(line, "SNAP_FILE")
                 if parallel_version
                     write(this_par, "SNAP_FILE = "*gadget_data.snap*"\n")
                 end
             elseif startswith(line, "SNAP_START")
                 if !parallel_version
-                    write(this_par, "SNAP_START = "*sprintf1("%d",get_snapshot_number_from_name(data.snap))*"\n")
+                    write(this_par, "SNAP_START = "*sprintf1("%d",get_snapshot_number_from_name(gadget_data.snap))*"\n")
                 end
             elseif startswith(line, "R_VIR")
                 write(this_par, "R_VIR = "*sprintf1("%f",halo_radius)*"\n")
@@ -239,11 +239,11 @@ function choose_output_map(property::String)
 end
 
 """
-    choose_energy_bands_instrument(property::String)
+    choose_energy_bands_instrument(property::String; i_output_sub::Int=-1)
 
 Return OUTPUT_SUB, XRAY_E0, and XRAY_E1 for given property, if it contains the instrument in the name.
 """
-function choose_energy_bands_instrument(property::String)
+function choose_energy_bands_instrument(property::String; i_output_sub::Int=-1)
     # choose the energy band and output subtype.
     e0 = 0.5
     e1 = 2.0

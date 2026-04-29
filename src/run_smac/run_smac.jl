@@ -19,7 +19,7 @@ function run_smac(; gadget_data::GadgetData,
                       )
     
     if use_mpi
-        n_mpi = get_number_of_sub_snaps(get_simulation_path(gadget_data.snap), i_snap)
+        n_mpi = get_number_of_sub_snaps(gadget_data)
     else
         n_mpi = 1
     end
