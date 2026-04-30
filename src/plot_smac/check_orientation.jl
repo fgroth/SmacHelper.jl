@@ -36,7 +36,7 @@ function check_rotated_north_east_righthanded(fitsfile::String; los::Vector{Floa
     east_angle = default_east_angle(fitsfile, los=los, default_north=default_north)
     north_angle = default_north_angle(fitsfile, default_north=default_north)
 
-    return check_north_east_righthanded(north_angle=north_angle, east_angle=east_angle)
+    return check_north_east_angle_righthanded(north_angle=north_angle, east_angle=east_angle)
 end
 
 """
