@@ -21,7 +21,7 @@ function overplot_north(ax; north_angle::Float64=0.0,
     y0 = maximum(ylim) - delta_y * 0.12/0.10
     
     ax.text(x0, y0, repeat(" ",20),
-            ha="center", va="bottom", rotation=north_angle*180/pi+90, size=4,
+            ha="center", va="bottom", rotation=rad2deg(north_angle), size=4,
             bbox=Dict("boxstyle"=>"rarrow,pad=0.3",
                       "fc"=>"gray", "ec"=>"white", "lw"=>2))
     ax.text(x0, y0-0.2*delta_y, "N",
