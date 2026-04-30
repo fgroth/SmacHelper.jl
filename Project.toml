@@ -1,7 +1,7 @@
 name = "SmacHelper"
 uuid = "78ebea84-8995-4757-8690-c4a995716b46"
 authors = ["Frederick Groth <fgroth@usm.lmu.de>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 FITSIO = "525bcba6-941b-5504-bd06-fd0dc1a4d2eb"
