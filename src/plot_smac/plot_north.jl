@@ -1,4 +1,5 @@
 using PyPlot
+using PyPlotHelper
 
 """
     overplot_north(ax; north_angle::Float64=0.0,
