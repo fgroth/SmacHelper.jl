@@ -52,14 +52,14 @@ function determine_best_axis_match(fitsfile::String; los::Vector{Float64}, defau
     #check which axis is closest to north:
     north_axis = check_closest_axis(north_angle)
     # we should just check the general rotation between north and east. There could be rare edge-cases where east and north are just below pi/2 apart due to numerical rounding and they perfectly align with the limits between axis, which could lead to north and east being assigned to the same axis.
-    right_handed = check_north_east_angle_righthanded(north_angle=north_angle, east_angle_east_angle)
+    right_handed = check_north_east_angle_righthanded(north_angle=north_angle, east_angle=east_angle)
     if right_handed
         east_axis = right_axis(north_axis)
     else
         east_axis = left_axis(north_axis)
     end
     
-    return north_axis, north_axis
+    return north_axis, east_axis
 end
 
 """
