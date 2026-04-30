@@ -2,6 +2,17 @@
 
 This package provides helper and wrapper functionalities for the [smac](https://gitlab.lrz.de/MAGNETICUM/smac) map making utility.
 
+## Installation
+
+Just add the package from github:
+```julia
+] # go to package mode
+add git@github.com:fgroth/SmacHelper.jl.git
+# or
+add https://github.com/fgroth/SmacHelper.jl.git
+```
+
+In the same way you might need to add [GadgetDataHandle](https://github.com/fgroth/GadgetDataHandle.jl) and [PyPlotHelper](https://github.com/fgroth/PyPlotHelper.jl) as requirements.
 
 ## Setup
 
