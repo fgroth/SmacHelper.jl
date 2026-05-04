@@ -58,6 +58,8 @@ If post-processing is applied to a fits file, a keyword can be added to the head
 
 ## Plotting the smac data
 
+For a description on how to understand the smac maps, including their rotation / reflections, see the [Smac wiki](https://gitlab.lrz.de/MAGNETICUM/smac/-/wikis/home/InterpretingMaps).
+
 A wrapper function to [PyPlot](https://github.com/JuliaPy/PyPlot.jl) that automatically takes care of different axis conventions is `imshow_julia_array`.
 
 The physical scale of the image can be shown using `plot_scale`, the virial radius using `plot_rvir_circle`, and the north direction with `overplot_north`.
