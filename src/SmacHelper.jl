@@ -52,4 +52,9 @@ export plot_rvir_circle
 include(joinpath("plot_smac", "plot_north.jl"))
 export overplot_north
 
+# more post-processing functions
+include(joinpath("analyze_smac", "distance_array_wcs.jl"))
+export radius_array_map_wcs
+
+
 end # module SmacHelper
