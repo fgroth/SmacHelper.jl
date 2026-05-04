@@ -19,6 +19,9 @@ export read_rotation_matrix_from_fitsfile,
     get_image_size, get_image_pixel_size,
     get_pixel_scale
 
+include(joinpath("read_smac", "read_wcs.jl"))
+export get_image_size_wcs
+
 include(joinpath("read_smac", "read_smac_paramfile.jl"))
 
 
