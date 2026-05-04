@@ -40,7 +40,7 @@ end
 Return the default east direction based on the line-of-sight vector (pointing from the observer to the cluster), and the north direction.
 """
 function default_east_direction(; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
-    return cross(normalize(los), default_north)
+    return normalize(cross(los, default_north))
 end
 
 """
@@ -51,4 +51,15 @@ Return the east angle due to the image rotation done by smac/phox.
 function default_east_angle(fitsfile::String; los::Vector{Float64}, default_north::Vector{Float64}=[0,0,1.0])
     default_east = default_east_direction(los=los, default_north=default_north)
     return rotated_direction_angle(fitsfile, direction=default_east)
+end
+
+"""
+    default_los(fitsfile::String; default_north::Vector{Float64}=[0,0,1.0])
+
+Return the default los direction based on the rotation matrix, assuming a rotation of the los into z-direction.
+"""
+function default_los(fitsfile::String)
+    rotation_matrix = read_rotation_matrix_from_fitsfile(fitsfile)
+    # the inverse of a rotation matrix is equal to the transpose.
+    return transpose(rotation_matrix) * [0,0,1]
 end
