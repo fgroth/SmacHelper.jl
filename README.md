@@ -47,7 +47,7 @@ In addition, the north and east directions do not always align with any coordina
 There can be a rotation and even mirroring of some direction.
 
 To interpret the image, it might be useful to rotate / mirror the image, such that north points as close to the y-axis, and east as close to the x-axis as possible.
-This can be done by first checking the north and east angles with `default_north_angle`/`default_east_angle`. The line-of-sight has to be specified, it is not contained in the smac output.
+This can be done by first checking the north and east angles with `default_north_angle`/`default_east_angle`. The line-of-sight has to be specified, it is not contained directly in the smac output. It can be inferred from the inverse rotation matrix using `default_los`.
 Based on the angles, the closest axis have to be identified using `determine_best_axis_match`. Finally, the image (and angles) can be adjusted using `permute_image_righthanded`.
 
 
