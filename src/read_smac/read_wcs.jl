@@ -44,7 +44,7 @@ end
 
 """
     check_wcs_format(fitsfile::String; kwargs...)
-    check_wcs_format(hdu::FITSIO.FITS; kwargs...)
+    check_wcs_format(f::FITSIO.FITS; kwargs...)
     check_wcs_format(hdu::FITSIO.HDU; throw_error::Bool=false)
 
 Return if all requirements for extracting the image size in WCS format are satisfied.
