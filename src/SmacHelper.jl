@@ -28,7 +28,8 @@ export add_keyword_to_fits_header
 # post-process and plot smac data / fitsfile
 include(joinpath("plot_smac", "determine_orientation.jl"))
 export rotated_direction, rotated_direction_angle,
-    default_north_angle, default_east_angle
+    default_north_angle, default_east_angle,
+    default_los
 
 include(joinpath("plot_smac", "check_orientation.jl"))
 export check_rotated_north_east_righthanded,
