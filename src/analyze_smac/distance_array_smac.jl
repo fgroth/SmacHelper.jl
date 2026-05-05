@@ -1,5 +1,15 @@
 
 """
+    radius_array_map_fits(f::FITSIO.FITS; pixel_scale::Real=-1, total_size::Real=-1)
+
+Return the Matrix containin the squared distance from the center.
+
+See [`radius2_array_map_fits`](@ref).
+"""
+function radius_array_map_fits(f::FITSIO.FITS; pixel_scale::Real=-1, total_size::Real=-1)
+    return sqrt.(radius2_array_map_fits(f, pixel_scale=pixel_scale, total_size=total_size))
+end
+"""
     radius2_array_map_fits(f::FITSIO.FITS; pixel_scale::Real=-1, total_size::Real=-1)
 
 Return the Matrix containin the squared distance from the center.
