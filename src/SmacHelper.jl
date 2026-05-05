@@ -55,6 +55,10 @@ export overplot_north
 # more post-processing functions
 include(joinpath("analyze_smac", "distance_array_wcs.jl"))
 export radius_array_map_wcs
+include(joinpath("analyze_smac", "distance_array_smac.jl"))
+export radius2_array_map_fits
+include(joinpath("analyze_smac", "distance_array_general.jl"))
+export radius_array_map, radius2_array_map
 
 
 end # module SmacHelper
