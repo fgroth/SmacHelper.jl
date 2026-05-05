@@ -63,3 +63,10 @@ For a description on how to understand the smac maps, including their rotation /
 A wrapper function to [PyPlot](https://github.com/JuliaPy/PyPlot.jl) that automatically takes care of different axis conventions is `imshow_julia_array`.
 
 The physical scale of the image can be shown using `plot_scale`, the virial radius using `plot_rvir_circle`, and the north direction with `overplot_north`.
+
+# Post-processing
+
+To compute radial profiles, the Matrix containing the distance of each pixel from the center can be computed
+- for images in WCS format: `radius_array_map_wcs`, `radius2_array_map_wcs`,
+- for direct smac output: `radius_array_map_fits`, `radius2_array_map_fits`,
+- as wrapper, deciding between both cases: `radius_array_map`, `radius2_array_map`.
