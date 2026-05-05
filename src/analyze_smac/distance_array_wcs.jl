@@ -2,6 +2,21 @@ using FITSIO
 using WCS
 
 """
+    radius2_array_map_wcs(fitsfile::String; kwargs...)
+    radius2_array_map_wcs(f::FITSIO.FITS; kwargs...)
+
+Return the Matrix containin the squared distance from the center.
+
+See [`radius_array_map_wcs`](@ref).
+"""
+function radius2_array_map_wcs(fitsfile::String; kwargs...)
+    return radius_array_map_wcs(fitsfile ; kwargs...) .^ 2
+end
+function radius2_array_map_wcs(f::FITSIO.FITS; kwargs...)
+    return radius_array_map_wcs(f ; kwargs...) .^ 2
+end
+
+"""
     radius_array_map_wcs(fitsfile::String; kwargs...)
     radius_array_map_wcs(f::FITSIO.FITS; angular_diameter_distance::Float64)
 
