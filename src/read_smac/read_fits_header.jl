@@ -1,23 +1,28 @@
 using FITSIO
 
 """
-    get_image_size(fitsfile::String)
-    get_image_size(f::FITSIO.FITS)
+    get_image_size(fitsfile::String; angular_diameter_distance::Real=-1)
+    get_image_size(f::FITSIO.FITS; angular_diameter_distance::Real=-1)
 
 Return the physical image size in kpc.
 """
-function get_image_size(fitsfile::String)
+function get_image_size(fitsfile::String; angular_diameter_distance::Real=-1)
     FITS(fitsfile) do f
-        get_image_size(f)
+        get_image_size(f, angular_diameter_distance=angular_diameter_distance)
     end
 end
-function get_image_size(f::FITSIO.FITS)
+function get_image_size(f::FITSIO.FITS; angular_diameter_distance::Real=-1)
     fits_index = find_maps_index(f)
     header = FITSIO.read_header(f[fits_index])
     if "BOX_KPC" in header.keys
         return header["BOX_KPC"]
+    elseif SmacHelper.check_wcs_format(f[fits_index])
+        if angular_diameter_distance < 0
+            error("angular_diameter_distance > 0 has to be provided")
+        end
+        return get_image_size_wcs(f[fits_index], angular_diameter_distance=angular_diameter_distance)
     else
-        error("fits file does not contain BOX_KPC key in header")
+        error("fits file format not supported for automatic size extraction")
     end
 end
 
