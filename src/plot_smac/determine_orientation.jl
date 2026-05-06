@@ -61,5 +61,5 @@ Return the default los direction based on the rotation matrix, assuming a rotati
 function default_los(fitsfile::String)
     rotation_matrix = read_rotation_matrix_from_fitsfile(fitsfile)
     # the inverse of a rotation matrix is equal to the transpose.
-    return transpose(rotation_matrix) * [0,0,1]
+    return transpose(rotation_matrix) * [0,0,1.0]
 end
