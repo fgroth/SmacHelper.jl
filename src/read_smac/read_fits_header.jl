@@ -68,11 +68,22 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
     rotation_matrix = Matrix{Float64}(undef,3,3)
 
     rotation_matrix = FITS(fitsfile) do file
-        try
-            [FITSIO.read_header(file[2])["ROTMAT_EAST_X"]  FITSIO.read_header(file[2])["ROTMAT_EAST_Y"]  FITSIO.read_header(file[2])["ROTMAT_EAST_Z"]
-             FITSIO.read_header(file[2])["ROTMAT_NORTH_X"] FITSIO.read_header(file[2])["ROTMAT_NORTH_Y"] FITSIO.read_header(file[2])["ROTMAT_NORTH_Z"]
-             FITSIO.read_header(file[2])["ROTMAT_LOS_X"]   FITSIO.read_header(file[2])["ROTMAT_LOS_Y"]   FITSIO.read_header(file[2])["ROTMAT_LOS_Z"]]
-        catch
+        header = FITSIO.read_header(file[2])
+        if issubset(["RM_EAS_X", "RM_EAS_Y", "RM_EAS_Z",
+                     "RM_NOR_X", "RM_NOR_Y", "RM_NOR_Z",
+                     "RM_LOS_X", "RM_LOS_Y", "RM_LOS_Z"], header.keys)
+            # new format
+            [header["RM_EAS_X"] header["RM_EAS_Y"] header["RM_EAS_Z"]
+             header["RM_NOR_X"] header["RM_NOR_Y"] header["RM_NOR_Z"]
+             header["RM_LOS_X"] header["RM_LOS_Y"] header["RM_LOS_Z"]]
+        elseif issubset(["ROTMAT_EAST_X", "ROTMAT_EAST_Y", "ROTMAT_EAST_Z",
+                     "ROTMAT_NORTH_X", "ROTMAT_NORTH_Y", "ROTMAT_NORTH_Z",
+                         "ROTMAT_LOS_X", "ROTMAT_LOS_Y", "ROTMAT_LOS_Z"], header.keys)
+            # old format
+            [header["ROTMAT_EAST_X"]  header["ROTMAT_EAST_Y"]  header["ROTMAT_EAST_Z"]
+             header["ROTMAT_NORTH_X"] header["ROTMAT_NORTH_Y"] header["ROTMAT_NORTH_Z"]
+             header["ROTMAT_LOS_X"]   header["ROTMAT_LOS_Y"]   header["ROTMAT_LOS_Z"]]
+        else
             @warn "no rotation matrix found in fits file, fall back to default value"
             I
         end
