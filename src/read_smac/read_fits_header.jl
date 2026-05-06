@@ -68,7 +68,7 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
     rotation_matrix = Matrix{Float64}(undef,3,3)
 
     rotation_matrix = FITS(fitsfile) do file
-        header = FITSIO.read_header(file[2])
+        header = FITSIO.read_header(file[find_maps_index(file)])
         if issubset(["RM_EAS_X", "RM_EAS_Y", "RM_EAS_Z",
                      "RM_NOR_X", "RM_NOR_Y", "RM_NOR_Z",
                      "RM_LOS_X", "RM_LOS_Y", "RM_LOS_Z"], header.keys)
