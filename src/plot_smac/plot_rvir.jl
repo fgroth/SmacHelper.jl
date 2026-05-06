@@ -27,7 +27,7 @@ function plot_rvir_circle(ax::PyCall.PyObject; rvir_to_plot::Union{Real,Tuple{<:
         rvir_scale = 0.5 ./ rvir_to_plot
         width_height = (x_length,y_length) .* rvir_scale
         # switch indices due to column major order in julia.
-        ax.add_patch(matplotlib.patches.Ellipse(central_pixel,width_height[1],width_height[2],
+        ax.add_patch(matplotlib.patches.Ellipse(center,width_height[1],width_height[2],
                                                 fill=false,color="gray",linestyle="dashed"))
     end
 
