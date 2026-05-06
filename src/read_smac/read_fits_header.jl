@@ -60,6 +60,54 @@ function get_pixel_scale(f::FITSIO.FITS)
 end
 
 """
+    get_los_from_fitsfile(fitsfile::String)
+    get_los_from_fitsfile(f::FITSIO.FITS)
+
+Return the line-of-sight vector.
+"""
+function get_los_from_fitsfile(fitsfile::String)
+    FITS(fitsfile) do f
+        return get_los_from_fitsfile(f)
+    end
+end
+function get_los_from_fitsfile(f::FITSIO.FITS)
+    return get_cluster_position_from_fitsfile(f) .- get_observer_position_from_fitsfile(f)
+end
+
+"""
+    get_observer_position_from_fitsfile(fitsfile::String)
+    get_observer_position_from_fitsfile(f::FITSIO.FITS)
+
+Return the observer position for lightcone-mode.
+"""
+function get_observer_position_from_fitsfile(fitsfile::String)
+    FITS(fitsfile) do f
+        return get_observer_position_from_fitsfile(f)
+    end
+end
+function get_observer_position_from_fitsfile(f::FITSIO.FITS)
+    hdu = f[find_maps_index(f)]
+    head = FITSIO.read_header(hdu)
+    return [head["XORIGIN"], head["YORIGIN"], head["ZORIGIN"]]
+end
+
+"""
+    get_cluster_position_from_fitsfile(fitsfile::String)
+    get_cluster_position_from_fitsfile(f::FITSIO.FITS)
+
+"""
+function get_cluster_position_from_fitsfile(fitsfile::String)
+    FITS(fitsfile) do f
+        return get_cluster_position_from_fitsfile(f)
+    end
+end
+function get_cluster_position_from_fitsfile(f::FITSIO.FITS)
+    hdu = f[find_maps_index(f)]
+    head = FITSIO.read_header(hdu)
+    return [head["XCENTRUM"], head["YCENTRUM"], head["ZCENTRUM"]]
+end
+
+"""
     read_rotation_matrix_from_fitsfile(fitsfile::String)
 
 Return the rotation matrix from a given fits file.
@@ -91,4 +139,3 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
 
     return rotation_matrix
 end
-
