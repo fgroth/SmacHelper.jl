@@ -10,6 +10,10 @@ function find_maps_index(f::FITS)
         if isa(f[i], FITSIO.ImageHDU) && (ndims(f[i]) == 2)
             return i
         end
+        # if the fits contains Healpix data, these are stored in a table
+        if isa(f[i], FITSIO.TableHDU) && (read_header(f[i])["NAXIS"] == 2)
+            return i
+        end
     end
     # if none if found, return NaN to indicate failure
     return NaN
