@@ -70,3 +70,5 @@ To compute radial profiles, the Matrix containing the distance of each pixel fro
 - for images in WCS format: `radius_array_map_wcs`, `radius2_array_map_wcs`,
 - for direct smac output: `radius_array_map_fits`, `radius2_array_map_fits`,
 - as wrapper, deciding between both cases: `radius_array_map`, `radius2_array_map`.
+
+A gnomonic map can be extracted usig `extract_gnomonic_projection_at_pole`. If the Healpix map was created in lightcone mode, thus rotating the object of interest rotating to the pole, the `north_angle_zero` should be calculated using `default_north_angle`.

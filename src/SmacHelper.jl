@@ -60,5 +60,7 @@ export radius_array_map_fits, radius2_array_map_fits
 include(joinpath("analyze_smac", "distance_array_general.jl"))
 export radius_array_map, radius2_array_map
 
+include(joinpath("analyze_smac", "extract_gnomonic.jl"))
+export extract_gnomonic_projection_at_pole
 
 end # module SmacHelper
