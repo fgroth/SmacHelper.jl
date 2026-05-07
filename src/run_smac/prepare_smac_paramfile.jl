@@ -173,6 +173,12 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 write(this_par, "CENTER_Y = "*sprintf1("%f",halo_position[2]*1e-3)*"\n")
             elseif startswith(line, "CENTER_Z")
                 write(this_par, "CENTER_Z = "*sprintf1("%f",halo_position[3]*1e-3)*"\n")
+            elseif startswith(line, "CENTER_X_CODE")
+                write(this_par, "CENTER_X_CODE = "*sprintf1("%f",halo_position[1])*"\n")
+            elseif startswith(line, "CENTER_Y_CODE")
+                write(this_par, "CENTER_Y_CODE = "*sprintf1("%f",halo_position[2])*"\n")
+            elseif startswith(line, "CENTER_Z_CODE")
+                write(this_par, "CENTER_Z_CODE = "*sprintf1("%f",halo_position[3])*"\n")
             elseif startswith(line, "LIGHTCONE")
                 write(this_par, "LIGHTCONE = "*sprintf1("%d",lightcone_center!=nothing)*"\n")
             elseif startswith(line, "X_ORIGIN") && lightcone_center != nothing
@@ -181,6 +187,12 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 write(this_par, "Y_ORIGIN = "*sprintf1("%f",lightcone_center[2]*1e-3)*"\n")
             elseif startswith(line, "Z_ORIGIN") && lightcone_center != nothing
                 write(this_par, "Z_ORIGIN = "*sprintf1("%f",lightcone_center[3]*1e-3)*"\n")
+            elseif startswith(line, "X_ORIGIN_CODE") && lightcone_center != nothing
+                write(this_par, "X_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[1])*"\n")
+            elseif startswith(line, "Y_ORIGIN_CODE") && lightcone_center != nothing
+                write(this_par, "Y_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[2])*"\n")
+            elseif startswith(line, "Z_ORIGIN_CODE") && lightcone_center != nothing
+                write(this_par, "Z_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[3])*"\n")
             elseif startswith(line, "OPEN_ANGLE")
                 # this parameter is not working at the moment. Once it is working, we have to double check it here!
                 write(this_par, "OPEN_ANGLE = "*sprintf1("%f",opening_angle)*"\n")
