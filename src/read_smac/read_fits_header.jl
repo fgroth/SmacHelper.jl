@@ -78,7 +78,7 @@ end
     get_observer_position_from_fitsfile(fitsfile::String)
     get_observer_position_from_fitsfile(f::FITSIO.FITS)
 
-Return the observer position for lightcone-mode.
+Return the observer position in code units for lightcone-mode.
 """
 function get_observer_position_from_fitsfile(fitsfile::String)
     FITS(fitsfile) do f
@@ -88,13 +88,19 @@ end
 function get_observer_position_from_fitsfile(f::FITSIO.FITS)
     hdu = f[find_maps_index(f)]
     head = FITSIO.read_header(hdu)
-    return [head["XORIGIN"], head["YORIGIN"], head["ZORIGIN"]]
+    if issubset(["XO_CODE", "YO_CODE", "ZO_CODE"], head.keys)
+        return [head["XO_CODE"], head["YO_CODE"], head["ZO_CODE"]]
+    else
+        # old output in cMpc/h, convert to ckpc/h
+        return [head["XORIGIN"]*1e-3, head["YORIGIN"]*1e-3, head["ZORIGIN"]*1e-3]
+    end
 end
 
 """
     get_cluster_position_from_fitsfile(fitsfile::String)
     get_cluster_position_from_fitsfile(f::FITSIO.FITS)
 
+Return the cluster center in code units.
 """
 function get_cluster_position_from_fitsfile(fitsfile::String)
     FITS(fitsfile) do f
@@ -104,7 +110,12 @@ end
 function get_cluster_position_from_fitsfile(f::FITSIO.FITS)
     hdu = f[find_maps_index(f)]
     head = FITSIO.read_header(hdu)
-    return [head["XCENTRUM"], head["YCENTRUM"], head["ZCENTRUM"]]
+    if issubset(["XC_CODE", "YC_CODE", "ZC_CODE"], head.keys)
+        return [head["XC_CODE"], head["YC_CODE"], head["ZC_CODE"]]
+    else
+        # old output in cMpc/h, convert to ckpc/h
+        return [head["XCENTRUM"]*1e-3, head["YCENTRUM"]*1e-3, head["ZCENTRUM"]*1e-3]
+    end
 end
 
 """
@@ -124,9 +135,9 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
             [header["RM_EAS_X"] header["RM_EAS_Y"] header["RM_EAS_Z"]
              header["RM_NOR_X"] header["RM_NOR_Y"] header["RM_NOR_Z"]
              header["RM_LOS_X"] header["RM_LOS_Y"] header["RM_LOS_Z"]]
-        elseif issubset(["ROTMAT_EAST_X", "ROTMAT_EAST_Y", "ROTMAT_EAST_Z",
-                     "ROTMAT_NORTH_X", "ROTMAT_NORTH_Y", "ROTMAT_NORTH_Z",
-                         "ROTMAT_LOS_X", "ROTMAT_LOS_Y", "ROTMAT_LOS_Z"], header.keys)
+        elseif issubset(["ROTMAT_EAST_X",  "ROTMAT_EAST_Y",  "ROTMAT_EAST_Z",
+                         "ROTMAT_NORTH_X", "ROTMAT_NORTH_Y", "ROTMAT_NORTH_Z",
+                         "ROTMAT_LOS_X",   "ROTMAT_LOS_Y",   "ROTMAT_LOS_Z"], header.keys)
             # old format
             [header["ROTMAT_EAST_X"]  header["ROTMAT_EAST_Y"]  header["ROTMAT_EAST_Z"]
              header["ROTMAT_NORTH_X"] header["ROTMAT_NORTH_Y"] header["ROTMAT_NORTH_Z"]
