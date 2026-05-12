@@ -1,6 +1,37 @@
 using FITSIO
 
 """
+    get_fits_header(fitsfile::String)
+    get_fits_header(f::FITSIO.FITS)
+
+Return the fits header.
+"""
+function get_fits_header(fitsfile::String)
+    FITS(fitsfile) do f
+        get_fits_header(f)
+    end
+end
+function get_fits_header(f::FITSIO.FITS)
+    fits_index = find_maps_index(f)
+    return FITSIO.read_header(f[fits_index])
+end
+"""
+    get_fits_header(fitsfile::String, ::Type{String})
+    get_fits_header(f::FITSIO.FITS, ::Type{String})
+
+Return the fits header.
+"""
+function get_fits_header(fitsfile::String, ::Type{String})
+    FITS(fitsfile) do f
+        get_fits_header(f, String)
+    end
+end
+function get_fits_header(f::FITSIO.FITS, ::Type{String})
+    fits_index = find_maps_index(f)
+    return FITSIO.read_header(f[fits_index], String)
+end
+
+"""
     get_image_size(fitsfile::String; angular_diameter_distance::Real=-1)
     get_image_size(f::FITSIO.FITS; angular_diameter_distance::Real=-1)
 
@@ -13,10 +44,10 @@ function get_image_size(fitsfile::String; angular_diameter_distance::Real=-1)
 end
 function get_image_size(f::FITSIO.FITS; angular_diameter_distance::Real=-1)
     fits_index = find_maps_index(f)
-    header = FITSIO.read_header(f[fits_index])
+    header = get_fits_header(f)
     if "BOX_KPC" in header.keys
         return header["BOX_KPC"]
-    elseif SmacHelper.check_wcs_format(f[fits_index])
+    elseif check_wcs_format(f[fits_index])
         if angular_diameter_distance < 0
             error("angular_diameter_distance > 0 has to be provided")
         end
@@ -27,16 +58,23 @@ function get_image_size(f::FITSIO.FITS; angular_diameter_distance::Real=-1)
 end
 
 """
+    get_image_pixel_size(fitsfile::String)
     get_image_pixel_size(f::FITSIO.FITS)
 
 Return the number of pixels.
 
 If both dimensions have the same pixel count, return only the number, otherwise return both as a Tuple
 """
+function get_image_pixel_size(fitsfile::String)
+    FITS(fitsfile) do f
+        get_image_pixel_size(f)
+    end
+end
 function get_image_pixel_size(f::FITSIO.FITS)
+    header = get_fits_header(f)
     fits_index = find_maps_index(f)
-    npix1 = FITSIO.read_header(f[fits_index])["NAXIS1"]
-    npix2 = FITSIO.read_header(f[fits_index])["NAXIS2"]
+    npix1 = header["NAXIS1"]
+    npix2 = header["NAXIS2"]
     if npix1 == npix2
         return npix1
     else
@@ -56,7 +94,7 @@ function get_pixel_scale(map::String)
     end
 end
 function get_pixel_scale(f::FITSIO.FITS)
-    FITSIO.read_header(f[find_maps_index(f)])["PSIZEKPC"]
+    get_fits_header(f)["PSIZEKPC"]
 end
 
 """
@@ -86,8 +124,7 @@ function get_observer_position_from_fitsfile(fitsfile::String)
     end
 end
 function get_observer_position_from_fitsfile(f::FITSIO.FITS)
-    hdu = f[find_maps_index(f)]
-    head = FITSIO.read_header(hdu)
+    head = get_fits_header(f)
     if issubset(["XO_CODE", "YO_CODE", "ZO_CODE"], head.keys)
         return [head["XO_CODE"], head["YO_CODE"], head["ZO_CODE"]]
     else
@@ -108,8 +145,7 @@ function get_cluster_position_from_fitsfile(fitsfile::String)
     end
 end
 function get_cluster_position_from_fitsfile(f::FITSIO.FITS)
-    hdu = f[find_maps_index(f)]
-    head = FITSIO.read_header(hdu)
+    head = get_fits_header(f)
     if issubset(["XC_CODE", "YC_CODE", "ZC_CODE"], head.keys)
         return [head["XC_CODE"], head["YC_CODE"], head["ZC_CODE"]]
     else
@@ -127,7 +163,7 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
     rotation_matrix = Matrix{Float64}(undef,3,3)
 
     rotation_matrix = FITS(fitsfile) do file
-        header = FITSIO.read_header(file[find_maps_index(file)])
+        header = get_fits_header(file)
         if issubset(["RM_EAS_X", "RM_EAS_Y", "RM_EAS_Z",
                      "RM_NOR_X", "RM_NOR_Y", "RM_NOR_Z",
                      "RM_LOS_X", "RM_LOS_Y", "RM_LOS_Z"], header.keys)

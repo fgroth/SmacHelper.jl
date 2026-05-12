@@ -15,7 +15,8 @@ include(joinpath("read_smac", "read_fits_data.jl"))
 export find_maps_index, read_maps_data
 
 include(joinpath("read_smac", "read_fits_header.jl"))
-export read_rotation_matrix_from_fitsfile,
+export get_fits_header,
+    read_rotation_matrix_from_fitsfile,
     get_image_size, get_image_pixel_size,
     get_pixel_scale,
     get_los_from_fitsfile,
