@@ -24,21 +24,23 @@ function plot_scale(ax::PyCall.PyObject; size_physical::Union{Real,Tuple{<:Real,
             x_size_physical = size_physical
         else
             # julia is column major, which means x-direction is the second dimension. Also compare the transpose necessary when using imshow.
-            x_size_physical = size_physical[2]
+            x_size_physical = size_physical[1]
         end
-        order_of_magnitude = floor(Int, log10(x_size_physical * 2 * scale_fraction))
-        max_prefactor = floor(Int, x_size_physical * 2 * scale_fraction / 10^order_of_magnitude)
+        order_of_magnitude = floor(Int, log10(x_size_physical * scale_fraction))
+        max_prefactor = floor(Int, x_size_physical * scale_fraction / 10^order_of_magnitude)
         # choose where to position the size indicator
         center_fraction = if scale_fraction > 0.5*0.95 || centered_scale # add a margin of 5%, so we have some distance from the boundary
             0.5
         else
             0.25
         end
-        x_length_image = ax.get_xlim()
-        x_length_image = maximum(x_length_image) - minimum(x_length_image)
+        xlim_image = ax.get_xlim()
+        x_length_image = maximum(xlim_image) - minimum(xlim_image)
+        ylim_image = ax.get_ylim()
+        y_length_image = maximum(ylim_image) - minimum(ylim_image)
         
-        ax.plot([-max_prefactor/2,max_prefactor/2].* (10^order_of_magnitude/(x_size_physical*2) * x_length_image) .+ x_length_image*center_fraction,
-                [0.05,0.05].*x_length_image,
+        ax.plot([-0.5,0.5].* (max_prefactor * 10^order_of_magnitude * x_length_image/x_size_physical) .+ x_length_image*center_fraction,
+                minimum(ylim_image) .+ [0.05,0.05].*y_length_image,
                 linestyle="solid",marker="",color="white")
 
         ax.text(center_fraction, 0.06,
