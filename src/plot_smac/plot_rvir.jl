@@ -25,9 +25,8 @@ function plot_rvir_circle(ax::PyCall.PyObject; rvir_to_plot::Union{Real,Tuple{<:
                                                fill=false,color="gray",linestyle="dashed"))
     else
         # image is distorted, need to plot an ellipse of rvir
-        width = x_length / rvir_to_plot
-        height= y_length / rvir_to_plot
-        ax.add_patch(matplotlib.patches.Ellipse(center,width,height,
+        width_height = (x_length,y_length) ./ rvir_to_plot
+        ax.add_patch(matplotlib.patches.Ellipse(center,width_height[1],width_height[2],
                                                 fill=false,color="gray",linestyle="dashed"))
     end
 
