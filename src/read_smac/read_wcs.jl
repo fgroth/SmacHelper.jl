@@ -20,8 +20,8 @@ function get_image_size_wcs(hdu::FITSIO.HDU; angular_diameter_distance::Real)
     wcs = WCS.from_header(FITSIO.read_header(hdu,String))[1]
 
     # Pixel corners (0-indexed, inclusive)
-    pixel_corners = [0.0 nx-1.0 0.0 nx-1.0
-                     0.0 0.0 ny-1.0 ny-1.0]
+    pixel_corners = [wcs.crpix[1] wcs.crpix[1] 0.0          nx-1.0
+                     0.0          ny-1.0       wcs.crpix[2] wcs.crpix[2]]
 
     world_corners = pix_to_world(wcs, pixel_corners)
     ras  = world_corners[1,:]
@@ -32,14 +32,24 @@ function get_image_size_wcs(hdu::FITSIO.HDU; angular_diameter_distance::Real)
     center_ra, center_dec = pix_to_world(wcs, center)
 
     # Angular extents
-    ra_extent  = 0.5 * ( (ras[1]+ras[3])  - (ras[2]+ras[4]) )
-    dec_extent = 0.5 * ( (decs[3]+decs[4])  - (decs[1]+decs[2]) )
+    delta_ra  = ras .- center_ra
+    delta_dec = decs .- center_dec
+
+    # x angular extend (ra)
+    a = cosd.(center_dec)^2 .* sind.(delta_ra ./ 2).^2
+    x_angular_size = 2 .* asin.(sqrt.(a))
+
+    # y angular extend (dec)
+    a = sind.(delta_dec ./ 2).^2
+    y_angular_size = 2 .* asin.(sqrt.(a))
 
     # Convert to physical size
-    physical_size_x = deg2rad(ra_extent)* cosd(center_dec) * angular_diameter_distance
-    physical_size_y = deg2rad(dec_extent) * angular_diameter_distance
+    physical_size_x = sum(x_angular_size[3:4]) * angular_diameter_distance
+    physical_size_y = sum(y_angular_size[1:2]) * angular_diameter_distance
 
-    return physical_size_x, physical_size_y
+    # the gnomonic maps are (distorted) squares with equal image sizes in both directions.
+    # just return the mean of the two sizes that I determined
+    return 0.5*(physical_size_x + physical_size_y)
 end
 
 """
