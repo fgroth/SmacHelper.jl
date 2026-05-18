@@ -186,3 +186,27 @@ function read_rotation_matrix_from_fitsfile(fitsfile::String)
 
     return rotation_matrix
 end
+
+"""
+    fits_is_from_simulation(fitsfile::String)
+    fits_is_from_simulation(f::FITSIO.FITS)
+    fits_is_from_simulation(hdu::FITSIO.HDU)
+
+Return if the fits was produced based of a simulation based on WCS format and "SIM" keyword in header.
+"""
+function fits_is_from_simulation(fitsfile::String)
+    FITS(fitsfile) do f
+        fits_is_from_simulation(f)
+    end
+end
+function fits_is_from_simulation(f::FITSIO.FITS)
+    fits_is_from_simulation(f[find_maps_index(f)])
+end
+function fits_is_from_simulation(hdu::FITSIO.HDU)
+    if SmacHelper.check_wcs_format(hdu)
+        header = FITSIO.read_header(hdu)
+        return haskey(header, "SIM") && header["SIM"]
+    else
+        return true
+    end
+end
