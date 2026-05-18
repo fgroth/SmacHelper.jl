@@ -55,3 +55,52 @@ function extract_gnomonic(map::HealpixMap; center::Tuple=(0,0,0), npix::Union{In
     projection=gnomonic(map,Dict(:width=>width,:height=>height,:center=>center,:fov_rad=>fov_rad))
     return projection[1]
 end
+
+"""
+    write_wcs_fitsfile(fitsfile::String, data::Matrix;
+                       center_ra_dec::Tuple{Float64,Float64}, delta_ra_dec::Tuple{Float64,Float64},
+                       yoff::Float64=0.0, is_simulation::Bool=true)
+
+Write `data` to `fitsfile`, including a WCS conforming header.
+"""
+function write_wcs_fitsfile(fitsfile::String, data::Matrix;
+                            center_ra_dec::Tuple{Float64,Float64}, delta_ra_dec::Tuple{Float64,Float64},
+                            yoff::Float64=0.0, is_simulation::Bool=true)
+    # compare https://lweb.cfa.harvard.edu/~jzhao/SMA-FITS-CASA/docs/wcs88.pdf
+    # for a descritpion of the WCS keywords.
+    header = default_header(data)
+    # set these to bool, not Int as done in the default header
+    header["SIMPLE"] = true
+    header["EXTEND"] = true
+    # add FITS general reference
+    header["COMMENT"] = "FITS (Flexible Image Transport System) format is defined in 'Astronom"
+    header["COMMENT"] = "and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H"
+    # WCS keywords
+    header["CRPIX1"] = ceil(0.5*size(data, 1))
+    header["CRPIX2"] = ceil(0.5*size(data, 2))
+    header["CRVAL1"] = center_ra_dec[1]
+    header["CRVAL2"] = center_ra_dec[2]
+    header["CDELT1"] = delta_ra_dec[1]
+    header["CDELT2"] = delta_ra_dec[2]
+    header["CROTA2"] = 0.0
+    header["RADECSYS"] = "FK5"
+    header["CTYPE1"] = "RA---TAN"
+    header["CTYPE2"] = "DEC--TAN"
+    for keyword in ["CRPIX1", "CRPIX2",
+                    "CRVAL1", "CRVAL2",
+                    "CDELT1", "CDELT2",
+                    "CROTA2",
+                    "RADECSYS",
+                    "CTYPE1", "CTYPE2"]
+        set_comment!(header, keyword, "simplified WCS pars")
+    end
+    # personal extension
+    header["YOFF"] = yoff
+    set_comment!(header, "YOFF", "background signal level, substracted when reading")
+    header["SIM"] = is_simulation
+    set_comment!(header, "SIM", "data comes from simulation")
+ 
+    FITS(fitsfile, "w") do f
+        FITSIO.write(f, data, header=header)
+    end
+end
