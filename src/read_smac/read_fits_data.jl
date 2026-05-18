@@ -24,6 +24,8 @@ end
     read_maps_data(f::FITS)
 
 Return the image content from the fits file. Find the index automatically using [`find_maps_index`](@ref) to be more flexible.
+
+This also corrects for YOFF (private extension).
 """
 function read_maps_data(fitsfile::String)
     FITS(fitsfile) do f
@@ -32,5 +34,11 @@ function read_maps_data(fitsfile::String)
 end
 function read_maps_data(f::FITS)
     hdu = f[find_maps_index(f)]
-    read(hdu)
+    header = FITSIO.read_header(hdu)
+    if haskey(header,"YOFF")
+        yoff = header["YOFF"]
+    else
+        yoff = 0
+    end
+    read(hdu) .- yoff
 end
