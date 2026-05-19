@@ -44,7 +44,8 @@ function plot_scale(ax::PyCall.PyObject; size_physical::Union{Real,Tuple{<:Real,
                 linestyle="solid",marker="",color="white")
 
         ax.text(center_fraction, 0.06,
-                number_to_text(max_prefactor, order_of_magnitude, length_unit_name, length_unit_prefix),
+                number_to_text(max_prefactor, order_of_magnitude, length_unit_name, length_unit_prefix,
+                               keep_prefix=keep_prefix, show_order_of_magnitude_limit=show_order_of_magnitude_limit),
                 color="white", horizontalalignment="center", verticalalignment="bottom", transform=ax.transAxes)
     end
 end
