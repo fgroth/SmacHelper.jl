@@ -1,7 +1,7 @@
 using PyPlot
 using PyCall
 using LaTeXStrings
-using Formatting
+using Printf
 
 """
     plot_scale(ax::PyCall.PyObject; size_physical::Union{Real,Tuple{<:Real,<:Real}}, scale_fraction::Real=0.33,
@@ -72,12 +72,12 @@ function number_to_text(prefactor::Int, order_of_magnitude::Int64, unit_name::Ab
         adjusted_order_of_magnitude = total_order_of_magnitude - unit_order_of_magnitude
     end
     if abs(adjusted_order_of_magnitude) > show_order_of_magnitude_limit
-        number = LaTeXString("\$"*sprintf1("%d",prefactor)*"\\cdot"*sprintf1("10^{%d}",adjusted_order_of_magnitude)*"\$")
+        number = LaTeXString("\$"*(@sprintf "%d" prefactor)*"\\cdot"*(@sprintf "10^{%d}" adjusted_order_of_magnitude)*"\$")
     else # abs(adjusted_order_of_magnitude) <= show_order_of_magnitude_limit
         if adjusted_order_of_magnitude >= 0
-            number = sprintf1("%d", prefactor*10^adjusted_order_of_magnitude)
+            number = @sprintf "%d"  prefactor*10^adjusted_order_of_magnitude
         else # adjusted_order_of_magnitude < 0
-            number = "0."*repeat("0",adjusted_order_of_magnitude-1)*sprintf1("%d",prefactor)
+            number = "0."*repeat("0",adjusted_order_of_magnitude-1)*(@sprintf "%d" prefactor)
         end
     end
     return number * adjusted_prefix*unit_name
