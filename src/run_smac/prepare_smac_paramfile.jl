@@ -12,7 +12,7 @@ using LinearAlgebra
                          distr_scheme::String="SPH",
                          fits_dir::String="fits",
                          fits_suffix::String="",
-                         lightcone_center::Union{Vector,Nothing}=nothing,
+                         lightcone_center_kpch::Union{Vector,Nothing}=nothing,
                          opening_angle::Union{Nothing,Number}=nothing,
                          min_dist::Number=-1, max_dist::Number=-1,
                          template_paramfile::String="smac.inp"
@@ -30,7 +30,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                               distr_scheme::String="SPH",
                               fits_dir::String="fits",
                               fits_suffix::String="",
-                              lightcone_center::Union{Vector,Nothing}=nothing,
+                              lightcone_center_kpch::Union{Vector,Nothing}=nothing,
                               opening_angle::Union{Nothing,Number}=nothing,
                               min_dist::Number=-1, max_dist::Number=-1,
                               template_paramfile::String="smac.inp"
@@ -72,15 +72,15 @@ function write_smac_paramfile(; gadget_data::GadgetData,
 	image_size_z = image_depth_kpc
     end
     if min_dist < 0
-        if lightcone_center != nothing
-            min_dist = max(norm(halo_position-lightcone_center)/h0*scale_factor - 0.5*image_size_z, 0)
+        if lightcone_center_kpch != nothing
+            min_dist = max(norm(halo_position-lightcone_center_kpch)/h0*scale_factor - 0.5*image_size_z, 0)
         else
             min_dist = 0
         end
     end
     if max_dist < 0
-        if lightcone_center != nothing
-            max_dist = norm(halo_position-lightcone_center)/h0*scale_factor + 0.5*image_size_z
+        if lightcone_center_kpch != nothing
+            max_dist = norm(halo_position-lightcone_center_kpch)/h0*scale_factor + 0.5*image_size_z
         else
             max_dist = 1e38
         end
@@ -167,32 +167,32 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                     proj_index = 3
                 end
                 write(this_par, "PROJECT = "*sprintf1("%d",proj_index)*"\n")
-            elseif startswith(line, "CENTER_X")
-                write(this_par, "CENTER_X = "*sprintf1("%f",halo_position[1]*1e-3)*"\n")
-            elseif startswith(line, "CENTER_Y")
-                write(this_par, "CENTER_Y = "*sprintf1("%f",halo_position[2]*1e-3)*"\n")
-            elseif startswith(line, "CENTER_Z")
-                write(this_par, "CENTER_Z = "*sprintf1("%f",halo_position[3]*1e-3)*"\n")
             elseif startswith(line, "CENTER_X_CODE")
                 write(this_par, "CENTER_X_CODE = "*sprintf1("%f",halo_position[1])*"\n")
             elseif startswith(line, "CENTER_Y_CODE")
                 write(this_par, "CENTER_Y_CODE = "*sprintf1("%f",halo_position[2])*"\n")
             elseif startswith(line, "CENTER_Z_CODE")
                 write(this_par, "CENTER_Z_CODE = "*sprintf1("%f",halo_position[3])*"\n")
+            elseif startswith(line, "CENTER_X") # after the _CODE parameter version, as these otherwise could not be reached.
+                write(this_par, "CENTER_X = "*sprintf1("%f",halo_position[1]*1e-3)*"\n")
+            elseif startswith(line, "CENTER_Y")
+                write(this_par, "CENTER_Y = "*sprintf1("%f",halo_position[2]*1e-3)*"\n")
+            elseif startswith(line, "CENTER_Z")
+                write(this_par, "CENTER_Z = "*sprintf1("%f",halo_position[3]*1e-3)*"\n")
             elseif startswith(line, "LIGHTCONE")
-                write(this_par, "LIGHTCONE = "*sprintf1("%d",lightcone_center!=nothing)*"\n")
-            elseif startswith(line, "X_ORIGIN") && lightcone_center != nothing
-                write(this_par, "X_ORIGIN = "*sprintf1("%f",lightcone_center[1]*1e-3)*"\n")
-            elseif startswith(line, "Y_ORIGIN") && lightcone_center != nothing
-                write(this_par, "Y_ORIGIN = "*sprintf1("%f",lightcone_center[2]*1e-3)*"\n")
-            elseif startswith(line, "Z_ORIGIN") && lightcone_center != nothing
-                write(this_par, "Z_ORIGIN = "*sprintf1("%f",lightcone_center[3]*1e-3)*"\n")
-            elseif startswith(line, "X_ORIGIN_CODE") && lightcone_center != nothing
-                write(this_par, "X_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[1])*"\n")
-            elseif startswith(line, "Y_ORIGIN_CODE") && lightcone_center != nothing
-                write(this_par, "Y_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[2])*"\n")
-            elseif startswith(line, "Z_ORIGIN_CODE") && lightcone_center != nothing
-                write(this_par, "Z_ORIGIN_CODE = "*sprintf1("%f",lightcone_center[3])*"\n")
+                write(this_par, "LIGHTCONE = "*sprintf1("%d",lightcone_center_kpch!=nothing)*"\n")
+            elseif startswith(line, "X_ORIGIN") && lightcone_center_kpch != nothing
+                write(this_par, "X_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[1]*1e-3)*"\n")
+            elseif startswith(line, "Y_ORIGIN") && lightcone_center_kpch != nothing
+                write(this_par, "Y_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[2]*1e-3)*"\n")
+            elseif startswith(line, "Z_ORIGIN") && lightcone_center_kpch != nothing
+                write(this_par, "Z_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[3]*1e-3)*"\n")
+            elseif startswith(line, "X_ORIGIN_CODE") && lightcone_center_kpch != nothing
+                write(this_par, "X_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[1])*"\n")
+            elseif startswith(line, "Y_ORIGIN_CODE") && lightcone_center_kpch != nothing
+                write(this_par, "Y_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[2])*"\n")
+            elseif startswith(line, "Z_ORIGIN_CODE") && lightcone_center_kpch != nothing
+                write(this_par, "Z_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[3])*"\n")
             elseif startswith(line, "OPEN_ANGLE")
                 # this parameter is not working at the moment. Once it is working, we have to double check it here!
                 write(this_par, "OPEN_ANGLE = "*sprintf1("%f",opening_angle)*"\n")
