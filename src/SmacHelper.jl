@@ -21,7 +21,8 @@ export get_fits_header,
     get_pixel_scale,
     get_los_from_fitsfile,
     get_observer_position_from_fitsfile,
-    get_cluster_position_from_fitsfile
+    get_cluster_position_from_fitsfile,
+    fits_is_from_simulation
 
 include(joinpath("read_smac", "read_wcs.jl"))
 export get_image_size_wcs
@@ -65,6 +66,7 @@ include(joinpath("analyze_smac", "distance_array_general.jl"))
 export radius_array_map, radius2_array_map
 
 include(joinpath("analyze_smac", "extract_gnomonic.jl"))
-export extract_gnomonic_projection_at_pole
+export extract_gnomonic_projection_at_pole,
+    write_wcs_fitsfile
 
 end # module SmacHelper
