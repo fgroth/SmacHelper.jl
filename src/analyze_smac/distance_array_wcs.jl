@@ -27,7 +27,7 @@ function radius_array_map_wcs(fitsfile::String; kwargs...)
         radius_array_map_wcs(f ; kwargs...)
     end
 end
-function radius_array_map_wcs(f::FITSIO.FITS; angular_diameter_distance::Float64)
+function radius_array_map_wcs(f::FITSIO.FITS; angular_diameter_distance::Float64, radec_center::Union{Nothing,Tuple{<:Real,<:Real}}=nothing)
     data = read_maps_data(f)
     fits_index = find_maps_index(f)
     header = FITSIO.read_header(f[fits_index])
@@ -52,8 +52,13 @@ function radius_array_map_wcs(f::FITSIO.FITS; angular_diameter_distance::Float64
     dec = reshape(worldcoords[2,:], ny, nx)
 
     # reference center from header
-    ra0  = Float64(header["CRVAL1"])
-    dec0 = Float64(header["CRVAL2"])
+    if isa(radec_center,Nothing)
+        ra0  = Float64(header["CRVAL1"])
+        dec0 = Float64(header["CRVAL2"])
+    else
+        ra0 = radec_center[1]
+        dec0 = radec_center[2]
+    end
 
     # angular separation in radians
     ra0_rad  = deg2rad(ra0)
