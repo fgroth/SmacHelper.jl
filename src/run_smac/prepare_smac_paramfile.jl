@@ -1,5 +1,6 @@
 using GadgetDataHandle
 using LinearAlgebra
+using Printf
 
 """
     write_smac_paramfile(; gadget_data::GadgetData,
@@ -100,7 +101,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 write(this_par, line*"\n")
             elseif startswith(line, "USE_KEYS")
                 use_keys = has_key_files(gadget_data)
-                write(this_par, "USE_KEYS = "*sprintf1("%d",use_keys)*"\n")
+                write(this_par, "USE_KEYS = "*@sprintf("%d",use_keys)*"\n")
             elseif startswith(line, "OUTPUT_DIR")
                 write(this_par, "OUTPUT_DIR = "*get_simulation_path(gadget_data.snap)*"/\n")
             elseif startswith(line, "SNAP_FILE")
@@ -109,12 +110,12 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 end
             elseif startswith(line, "SNAP_START")
                 if !parallel_version
-                    write(this_par, "SNAP_START = "*sprintf1("%d",get_snapshot_number_from_name(gadget_data.snap))*"\n")
+                    write(this_par, "SNAP_START = "*@sprintf("%d",get_snapshot_number_from_name(gadget_data.snap))*"\n")
                 end
             elseif startswith(line, "R_VIR")
-                write(this_par, "R_VIR = "*sprintf1("%f",halo_radius)*"\n")
+                write(this_par, "R_VIR = "*@sprintf("%f",halo_radius)*"\n")
             elseif startswith(line, "M_VIR")
-                write(this_par, "M_VIR = "*sprintf1("%f",halo_mass)*"\n")
+                write(this_par, "M_VIR = "*@sprintf("%f",halo_mass)*"\n")
             elseif startswith(line, "KERNEL_TYPE")
                 last_part_of_run_directory = joinpath(splitpath(gadget_data.snap)[end-3:end])
                 if occursin("mfm",last_part_of_run_directory)
@@ -124,7 +125,7 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 else
                     kernel_type = 3
                 end
-                write(this_par, "KERNEL_TYPE = "*sprintf1("%d",kernel_type))
+                write(this_par, "KERNEL_TYPE = "*@sprintf("%d",kernel_type))
             elseif startswith(line, "PART_DISTR")
                 if distr_scheme == "CIC" || distr_scheme == "SPH"
                     part_distr = 1
@@ -135,27 +136,27 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 else
                     error("distr_scheme="*distr_scheme*" not supported by SMAC")
                 end
-                write(this_par, "PART_DISTR = "*sprintf1("%d", part_distr))
+                write(this_par, "PART_DISTR = "*@sprintf("%d", part_distr))
             elseif startswith(line, "IMG_XY_SIZE")
-                write(this_par, "IMG_XY_SIZE = "*sprintf1("%f",image_size_xy)*"\n")
+                write(this_par, "IMG_XY_SIZE = "*@sprintf("%f",image_size_xy)*"\n")
             elseif startswith(line, "IMG_Z_SIZE")
-                write(this_par, "IMG_Z_SIZE = "*sprintf1("%f",image_size_z)*"\n")
+                write(this_par, "IMG_Z_SIZE = "*@sprintf("%f",image_size_z)*"\n")
             elseif startswith(line, "IMG_SIZE")
-                write(this_par, "IMG_SIZE = "*sprintf1("%d",resolution)*"\n")
+                write(this_par, "IMG_SIZE = "*@sprintf("%d",resolution)*"\n")
             elseif startswith(line, "NSIDE")
-                write(this_par, "NSIDE = "*sprintf1("%d",resolution)*"\n")
+                write(this_par, "NSIDE = "*@sprintf("%d",resolution)*"\n")
             elseif startswith(line, "MIN_DIST")
-                write(this_par, "MIN_DIST = "*sprintf1("%f",min_dist)*"\n")
+                write(this_par, "MIN_DIST = "*@sprintf("%f",min_dist)*"\n")
             elseif startswith(line, "MAX_DIST")
-                write(this_par, "MAX_DIST = "*sprintf1("%g",max_dist)*"\n")
+                write(this_par, "MAX_DIST = "*@sprintf("%g",max_dist)*"\n")
             elseif startswith(line, "OUTPUT_MAP")
-                write(this_par, "OUTPUT_MAP = "*sprintf1("%d",i_output_map)*"\n")
+                write(this_par, "OUTPUT_MAP = "*@sprintf("%d",i_output_map)*"\n")
             elseif startswith(line, "OUTPUT_SUB")
-                write(this_par, "OUTPUT_SUB = "*sprintf1("%d",i_output_sub)*"\n")
+                write(this_par, "OUTPUT_SUB = "*@sprintf("%d",i_output_sub)*"\n")
             elseif startswith(line, "XRAY_E0")
-                write(this_par, "XRAY_E0 = "*sprintf1("%f",e0)*"\n")
+                write(this_par, "XRAY_E0 = "*@sprintf("%f",e0)*"\n")
             elseif startswith(line, "XRAY_E1")
-                write(this_par, "XRAY_E1 = "*sprintf1("%f",e1)*"\n")
+                write(this_par, "XRAY_E1 = "*@sprintf("%f",e1)*"\n")
             elseif startswith(line, "PROJECT")
                 if occursin("x", projection)
                     if occursin("y", projection)
@@ -166,45 +167,45 @@ function write_smac_paramfile(; gadget_data::GadgetData,
                 else
                     proj_index = 3
                 end
-                write(this_par, "PROJECT = "*sprintf1("%d",proj_index)*"\n")
+                write(this_par, "PROJECT = "*@sprintf("%d",proj_index)*"\n")
             elseif startswith(line, "CENTER_X_CODE")
-                write(this_par, "CENTER_X_CODE = "*sprintf1("%f",halo_position[1])*"\n")
+                write(this_par, "CENTER_X_CODE = "*@sprintf("%f",halo_position[1])*"\n")
             elseif startswith(line, "CENTER_Y_CODE")
-                write(this_par, "CENTER_Y_CODE = "*sprintf1("%f",halo_position[2])*"\n")
+                write(this_par, "CENTER_Y_CODE = "*@sprintf("%f",halo_position[2])*"\n")
             elseif startswith(line, "CENTER_Z_CODE")
-                write(this_par, "CENTER_Z_CODE = "*sprintf1("%f",halo_position[3])*"\n")
+                write(this_par, "CENTER_Z_CODE = "*@sprintf("%f",halo_position[3])*"\n")
             elseif startswith(line, "CENTER_X") # after the _CODE parameter version, as these otherwise could not be reached.
-                write(this_par, "CENTER_X = "*sprintf1("%f",halo_position[1]*1e-3)*"\n")
+                write(this_par, "CENTER_X = "*@sprintf("%f",halo_position[1]*1e-3)*"\n")
             elseif startswith(line, "CENTER_Y")
-                write(this_par, "CENTER_Y = "*sprintf1("%f",halo_position[2]*1e-3)*"\n")
+                write(this_par, "CENTER_Y = "*@sprintf("%f",halo_position[2]*1e-3)*"\n")
             elseif startswith(line, "CENTER_Z")
-                write(this_par, "CENTER_Z = "*sprintf1("%f",halo_position[3]*1e-3)*"\n")
+                write(this_par, "CENTER_Z = "*@sprintf("%f",halo_position[3]*1e-3)*"\n")
             elseif startswith(line, "LIGHTCONE")
-                write(this_par, "LIGHTCONE = "*sprintf1("%d",lightcone_center_kpch!=nothing)*"\n")
+                write(this_par, "LIGHTCONE = "*@sprintf("%d",lightcone_center_kpch!=nothing)*"\n")
             elseif startswith(line, "X_ORIGIN") && lightcone_center_kpch != nothing
-                write(this_par, "X_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[1]*1e-3)*"\n")
+                write(this_par, "X_ORIGIN = "*@sprintf("%f",lightcone_center_kpch[1]*1e-3)*"\n")
             elseif startswith(line, "Y_ORIGIN") && lightcone_center_kpch != nothing
-                write(this_par, "Y_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[2]*1e-3)*"\n")
+                write(this_par, "Y_ORIGIN = "*@sprintf("%f",lightcone_center_kpch[2]*1e-3)*"\n")
             elseif startswith(line, "Z_ORIGIN") && lightcone_center_kpch != nothing
-                write(this_par, "Z_ORIGIN = "*sprintf1("%f",lightcone_center_kpch[3]*1e-3)*"\n")
+                write(this_par, "Z_ORIGIN = "*@sprintf("%f",lightcone_center_kpch[3]*1e-3)*"\n")
             elseif startswith(line, "X_ORIGIN_CODE") && lightcone_center_kpch != nothing
-                write(this_par, "X_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[1])*"\n")
+                write(this_par, "X_ORIGIN_CODE = "*@sprintf("%f",lightcone_center_kpch[1])*"\n")
             elseif startswith(line, "Y_ORIGIN_CODE") && lightcone_center_kpch != nothing
-                write(this_par, "Y_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[2])*"\n")
+                write(this_par, "Y_ORIGIN_CODE = "*@sprintf("%f",lightcone_center_kpch[2])*"\n")
             elseif startswith(line, "Z_ORIGIN_CODE") && lightcone_center_kpch != nothing
-                write(this_par, "Z_ORIGIN_CODE = "*sprintf1("%f",lightcone_center_kpch[3])*"\n")
+                write(this_par, "Z_ORIGIN_CODE = "*@sprintf("%f",lightcone_center_kpch[3])*"\n")
             elseif startswith(line, "OPEN_ANGLE")
                 # this parameter is not working at the moment. Once it is working, we have to double check it here!
-                write(this_par, "OPEN_ANGLE = "*sprintf1("%f",opening_angle)*"\n")
+                write(this_par, "OPEN_ANGLE = "*@sprintf("%f",opening_angle)*"\n")
             elseif startswith(line, "PREFIX_OUT")
                 write(this_par, "PREFIX_OUT = "*local_fits_file*"\n")
             elseif startswith(line, "LAMBDA")
                 # auto set the cosmology parameters based on the snapshot header
-                write(this_par, "LAMBDA = "*sprintf1("%f",head.omega_l)*"\n")
+                write(this_par, "LAMBDA = "*@sprintf("%f",head.omega_l)*"\n")
             elseif startswith(line, "OMEGA")
-                write(this_par, "OMEGA = "*sprintf1("%f",head.omega_0)*"\n")
+                write(this_par, "OMEGA = "*@sprintf("%f",head.omega_0)*"\n")
             elseif startswith(line, "HUBBLE")
-                write(this_par, "HUBBLE = "*sprintf1("%f",head.h0)*"\n")
+                write(this_par, "HUBBLE = "*@sprintf("%f",head.h0)*"\n")
             else
                 write(this_par, line*"\n")
             end
